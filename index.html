@@ -1,0 +1,231 @@
+<!Doctype html>
+<html>
+
+<head>
+	<title> Wanck CodePlayer</title>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="js/bootstrap.js"></script>
+	<style type="text/css">
+		body {
+			margin: 0px;
+			padding: 0px;
+			font-family: "HelveticaNeue-Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+			font-weight: 300;
+		}
+
+		#menuBar {
+			width: 100%;
+			height: 40px;
+			background-color: #EEEEEE;
+			border-bottom: 1px solid grey;
+		}
+
+		#logo {
+			padding: 10px 0px 0px 20px;
+			font-size: 1.2em;
+			font-weight: bold;
+			float: left;
+		}
+
+		#runBtnDiv {
+			float: right;
+			padding: 5px 20px 0px 0px;
+		}
+
+		#runBtn {
+			font-size: 1.2em;
+		}
+
+		.list {
+			width: 197.6px;
+			height: 30px;
+			margin: 0 auto;
+			list-style: none;
+			border: 1px solid grey;
+			border-radius: 2px;
+			padding: 0px;
+			position: relative;
+			top: 5px;
+		}
+
+		.list li {
+			float: left;
+			margin: 0px;
+			font-size: 1.1em;
+			border-right: 1px solid grey;
+			padding: 5px 5px 5px 5px;
+		}
+
+		.codeContainer {
+			width: 50%;
+			float: left;
+			position: relative;
+			/*background-color: cyan;*/
+		}
+
+		.codeContainer textarea {
+			width: 100%;
+			height: 100%;
+			border: none;
+			border-right: 1px solid grey;
+			font-family: monotype;
+			font-size: 1.2em;
+			box-sizing: border-box;
+			padding: 5px;
+		}
+
+		#codeLabel {
+			position: absolute;
+			right: 10px;
+			top: 10px;
+			width: 60px;
+			height: 20px;
+			border: 1px solid black;
+			border-radius: 20px;
+			padding-left: 10px;
+		}
+
+		#CSSCode,
+		#JSCode {
+			display: none;
+		}
+
+		iframe {
+			height: 100%;
+			position: relative;
+			left: 20px;
+			border: none;
+		}
+
+		.selected {
+			background-color: grey;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="wrapper">
+
+		<!-- Menu -->
+		<div id="menuBar">
+			<!-- logo -->
+			<div id="logo"> CodePlayer</div>
+
+			<!-- run button -->
+			<div id="runBtnDiv">
+				<input type="submit" value="Run" id="runBtn" />
+			</div>
+
+			<!-- button list -->
+			<ul class="list">
+				<li class="toggle selected">HTML</li>
+				<li class="toggle">CSS</li>
+				<li class="toggle">JS</li>
+				<li class="toggle selected" style="border-right:none;">Result</li>
+			</ul>
+
+		</div>
+
+		<!-- Code Container HTML-->
+		<div class="codeContainer" id="HTMLCode">
+			<!-- adjust Code Container Height -->
+			<script>
+				var windowHeight = $(window).height();
+				var menuBarHeight = $("#menuBar").height();
+				var codeContainerHeight = windowHeight - menuBarHeight;
+				$(".codeContainer").height(codeContainerHeight + "px");
+			</script>
+
+			<!-- html indicator  -->
+			<div id="codeLabel">HTML</div>
+
+			<!-- Code typing zone textarea -->
+			<textarea id="html_Code"> <div id="test"></div></textarea>
+		</div>
+
+		<!-- Code Container CSS-->
+		<div class="codeContainer" id="CSSCode">
+			<!-- adjust Code Container Height -->
+			<script>
+				var windowHeight = $(window).height();
+				var menuBarHeight = $("#menuBar").height();
+				var codeContainerHeight = windowHeight - menuBarHeight;
+				$(".codeContainer").height(codeContainerHeight + "px");
+			</script>
+
+			<!-- CSS indicator  -->
+			<div id="codeLabel">CSS</div>
+
+			<!-- Code typing zone textarea -->
+			<textarea id="css_Code"></textarea>
+		</div>
+
+		<!-- Code Container JS-->
+		<div class="codeContainer" id="JSCode">
+			<!-- adjust Code Container Height -->
+			<script>
+				var windowHeight = $(window).height();
+				var menuBarHeight = $("#menuBar").height();
+				var codeContainerHeight = windowHeight - menuBarHeight;
+				$(".codeContainer").height(codeContainerHeight + "px");
+			</script>
+
+			<!-- JS indicator  -->
+			<div id="codeLabel">JS</div>
+
+			<!-- Code typing zone textarea -->
+			<textarea id="js_Code"></textarea>
+		</div>
+
+		<!-- Code Container Result-->
+		<div class="codeContainer" id="ResultCode">
+			<!-- adjust Code Container Height -->
+			<script>
+				var windowHeight = $(window).height();
+				var menuBarHeight = $("#menuBar").height();
+				var codeContainerHeight = windowHeight - menuBarHeight;
+				$(".codeContainer").height(codeContainerHeight + "px");
+			</script>
+
+			<!-- Result indicator  -->
+			<div id="codeLabel">Result</div>
+
+			<!-- Code typing zone textarea -->
+			<iframe id="frame"></iframe>
+		</div>
+
+		<script>
+			$(".toggle").click(function() {
+
+				$(this).toggleClass("selected");
+
+				// display and hide code blocks
+				var selectedToggle = $(this).html();
+				$("#" + selectedToggle + "Code").toggle();
+
+				// filter all code blocks and return true (Numb of blocks) if visible
+				var visibleDivs = $(".codeContainer").filter(function() {
+					return ($(this).css("display") != "none");
+				}).length;
+
+				// fix code blocks width each according to number of the displayed div
+				var widthNewCodeContainerDiv = 100 / visibleDivs;
+				$(".codeContainer").css("width", widthNewCodeContainerDiv + "%");
+			});
+
+			//Run click Button
+			$("#runBtn").click(function() {
+				// execute  queries into iframe
+				$("iframe").contents().find("html").html($("#html_Code").val() + '<style>' + $("#css_Code").val() + '<style>');
+
+				//jquery support
+				document.getElementById("frame").contentWindow.eval($("#js_Code").val());
+
+			});
+		</script>
+	</div>
+</body>
+
+</html>
